@@ -4,6 +4,15 @@ import { STARTUPS_QUERY } from "@/sanity/lib/queries";
 import { sanityFetch, SanityLive } from "@/sanity/lib/live";
 import { auth } from "@/auth";
 
+async function getStartups(params: { search: string | null }) {
+  "use cache";
+
+  return sanityFetch({
+    query: STARTUPS_QUERY,
+    params,
+  });
+}
+
 export default async function Home({
   searchParams,
 }: {
@@ -16,7 +25,7 @@ export default async function Home({
 
   console.log(session?.id);
 
-  const { data: posts } = await sanityFetch({ query: STARTUPS_QUERY, params });
+  const { data: posts } = await getStartups(params);
 
   return (
     <>
