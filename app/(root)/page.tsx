@@ -2,6 +2,7 @@ import SearchForm from "@/components/SearchForm";
 import StartupCard, { StartupTypeCard } from "@/components/StartupCard";
 import { STARTUPS_QUERY } from "@/sanity/lib/queries";
 import { sanityFetch, SanityLive } from "@/sanity/lib/live";
+import { Suspense } from "react";
 
 async function getStartups(params: { search: string | null }) {
   "use cache";
@@ -12,15 +13,13 @@ async function getStartups(params: { search: string | null }) {
   });
 }
 
-export default async function Home({
+async function HomeContent({
   searchParams,
 }: {
   searchParams: Promise<{ query?: string }>;
 }) {
   const query = (await searchParams).query;
   const params = { search: query || null };
-
-  
 
   const { data: posts } = await getStartups(params);
 
@@ -58,5 +57,17 @@ export default async function Home({
 
       <SanityLive />
     </>
+  );
+}
+
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ query?: string }>;
+}) {
+  return (
+    <Suspense fallback={null}>
+      <HomeContent searchParams={searchParams} />
+    </Suspense>
   );
 }
