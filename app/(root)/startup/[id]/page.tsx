@@ -16,10 +16,8 @@ import StartupCard, { StartupTypeCard } from "@/components/StartupCard";
 
 const md = markdownit();
 
-export const experimental_ppr = true;
-
-const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
-  const id = (await params).id;
+async function getStartup(id: string) {
+  "use cache";
 
   const [post, { select: editorPosts }] = await Promise.all([
     client.fetch(STARTUP_BY_ID_QUERY, { id }),
@@ -27,6 +25,18 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
       slug: "editor-picks-new",
     }),
   ]);
+
+  return { post, editorPosts };
+}
+
+const StartupContent = async ({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) => {
+  const id = (await params).id;
+
+  const { post, editorPosts } = await getStartup(id);
 
   if (!post) return notFound();
 
@@ -103,6 +113,18 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
         </Suspense>
       </section>
     </>
+  );
+};
+
+const Page = ({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) => {
+  return (
+    <Suspense fallback={<Skeleton className="view_skeleton" />}>
+      <StartupContent params={params} />
+    </Suspense>
   );
 };
 
