@@ -15,6 +15,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  turbopack: {},
   cacheComponents: true,
   devIndicators: {
     appIsrStatus: true,
