@@ -22,6 +22,7 @@ async function HomeContent({
   const params = { search: query || null };
 
   const { data: posts } = await getStartups(params);
+  console.log("STARTUPS:", posts);
 
   return (
     <>

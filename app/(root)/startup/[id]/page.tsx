@@ -19,12 +19,14 @@ const md = markdownit();
 async function getStartup(id: string) {
   "use cache";
 
-  const [post, { select: editorPosts }] = await Promise.all([
+  const [post, playlist] = await Promise.all([
     client.fetch(STARTUP_BY_ID_QUERY, { id }),
     client.fetch(PLAYLIST_BY_SLUG_QUERY, {
       slug: "editor-picks-new",
     }),
   ]);
+
+  const editorPosts = playlist?.select ?? [];
 
   return { post, editorPosts };
 }
@@ -65,11 +67,11 @@ const StartupContent = async ({
               className="flex gap-2 items-center mb-3"
             >
               <Image
-                src={post.author.image}
-                alt="avatar"
-                width={64}
-                height={64}
-                className="rounded-full drop-shadow-lg"
+                  src={post.author?.image || "/default-avatar.png"}
+                  alt={post.author?.name || "User"}
+                  width={64}
+                  height={64}
+                  className="rounded-full drop-shadow-lg"
               />
 
               <div>
